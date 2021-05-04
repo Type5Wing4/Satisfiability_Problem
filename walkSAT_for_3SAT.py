@@ -38,9 +38,12 @@ def simple_walkSAT_for_3SAT(benchmark_problem, nb_max_steps, p=0.2):
 
     print(0, xs)
 
+    # Start local search
     solved = False
     for steps in range(nb_max_steps):
 
+        # Calc F with current xs.
+        # If there is no unsatisfied clause, F is True, i.e. Satisfied. 
         sat_clause_indices = []
         unsat_clause_indices = []
         clause_num = 0
@@ -53,7 +56,7 @@ def simple_walkSAT_for_3SAT(benchmark_problem, nb_max_steps, p=0.2):
                 elif x < 0 and xs[abs(x)-1] == 0:
                     ith_clause = ith_clause or True 
                 else:
-                    ith_clause = ith_clause or False
+                    pass
 
             if ith_clause:
                 sat_clause_indices.append(clause_num)
@@ -67,11 +70,10 @@ def simple_walkSAT_for_3SAT(benchmark_problem, nb_max_steps, p=0.2):
 
         selected_clause_index = random.choice(unsat_clause_indices)
         if random.random() > p:
-            break_cause_indices = []
-            nb_clauses_to_unsat_from_sat_list = []
+            nb_clauses_from_sat_to_unsat_list = []
             for t in clauses[selected_clause_index]:
 
-                nb_clauses_to_unsat_from_sat = 0
+                nb_clauses_from_sat_to_unsat = 0
 
                 for j in sat_clause_indices:
 
@@ -85,22 +87,22 @@ def simple_walkSAT_for_3SAT(benchmark_problem, nb_max_steps, p=0.2):
                                 elif x < 0 and 1 - xs[abs(x)-1] == 0:
                                     ith_clause = ith_clause or True 
                                 else:
-                                    ith_clause = ith_clause or False
+                                    pass
                             else:
                                 if x > 0 and xs[x-1] == 1:
                                     ith_clause = ith_clause or True
                                 elif x < 0 and xs[abs(x)-1] == 0:
                                     ith_clause = ith_clause or True 
                                 else:
-                                    ith_clause = ith_clause or False
+                                    pass
 
                             if not ith_clause:
-                                nb_clauses_to_unsat_from_sat += 1 
-                nb_clauses_to_unsat_from_sat_list.append(nb_clauses_to_unsat_from_sat)
+                                nb_clauses_from_sat_to_unsat += 1 
+                nb_clauses_from_sat_to_unsat_list.append(nb_clauses_from_sat_to_unsat)
 
             min_val = len(clauses)
             num = 0
-            for nb_clauses_break in nb_clauses_to_unsat_from_sat_list:
+            for nb_clauses_break in nb_clauses_from_sat_to_unsat_list:
                 if min_val > nb_clauses_break:
                     min_val = nb_clauses_break
                     candidate_vars = [abs(clauses[selected_clause_index][num])]
